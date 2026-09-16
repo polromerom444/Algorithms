@@ -1,0 +1,166 @@
+
+6. Codis de Huffman i optimalitat
+---------------------------------
+
+Representem els codis instantanis com arbres binaris: partint de
+l'arrel, 0 = esquerra i 1 = dreta, fins una fulla. Les fulles són els
+símbols. Els camins des de l'arrel són els mots de codi.
+
+Huffman: Donades les freqüències P : A -> [0,1], dóna un codi òptim:
+
+ 1. mentre quedin com a mínim dos símbols,
+ 2. trobem els dos símbols a i b de freqüències mínimes,
+ 3. els fem germans d'un arbre de dues fulles,
+ 4. interpretem l'arrel com un nou símbol ab amb freqüència P(a)+P(b),
+ 5. tornem a començar.
+
+Optimalitat:
+
+Lemma 1: D'entre els codis instantanis òptims, n'hi ha un que té els
+dos símbols amb freqüències més petites com germans, i a profunditat
+màxima, dins l'arbre associat.
+
+Demostració: 
+
+Sigui C un codi instantani. El transformem per aconseguir el que volem
+sense empitjorar la longitud mitjana.
+
+Siguin a i b els dos símbols amb freqüències mes petites. 
+
+Si el símbol a no està associat a una fulla de profunditat màxima,
+llavors l'intercanviem amb el símbol x d'alguna de les fulles a
+profunditat màxima i només podem guanyar perquè la diferència en la
+longitud mitjana entre abans i després és
+
+  (L(x) - L(a)).(P(x) - P(a)) \geq 0
+
+Si el símbol a està associat a una fulla de profunditat màxima però
+aquesta no te cap germà, llavors podem la fulla, associem el símbol a
+al seu pare, que ara és una fulla, i només podem guanyar.
+
+Suposem doncs que el símbol a està associat a una fulla de profunditat
+màxima i que aquesta te un germà.
+
+Si el símbol b no està associat al germà de la fulla de a, llavors
+l'intercanviem amb el símbol associat al germà de la fulla de a i
+només podem, o bé guanyar (si b no estava a profunditat màxima), o be
+com a molt quedar-nos igual (si b estava a profunditat màxima), i en
+aquest últim cas ja tenim el que volíem.
+
+QED
+
+Siguin a i b els dos símbols de freqüències mes petites de P. Definim
+
+  P'(c) = P(c) per a tot c \in A amb c \not= a i c \not= b
+  P'(ab) = P(a) + P(b). [ab = símbol nou]
+
+Lemma 2: Si després de la primera iteració l'algorisme troba C' com a
+codi òptim per P', i si C és el codi per P que acaba retornant
+l'algorisme, llavors
+
+  L(C,P) = L(C',P') + P(a) + P(b).
+
+Demostració:
+
+Sigui A' l'alfabet de C'; i.e., A' = A - {a,b} + {ab}.
+
+Sigui L'(c) la longitud del símbol c in A' al codi C'.
+
+  L(C,P) 
+
+  = [separant els símbols a i b de la resta]
+
+  \sum_{c in A : c\not=a,b} P(c).L(c) + P(a).L(a) + P(b).L(b)
+
+  = [P'(ab) = P(a)+P(b), L'(ab) = L(a)-1 = L(b)-1]
+
+  \sum_{c in A : c\not=a,b} P'(c).L'(c) + P'(ab).L'(ab) + P(a) + P(b)
+
+  = [definicio de A']
+
+  \sum_{c in A'} P'(c).L'(c) + P(a) + P(b)
+
+  = [definicio]
+
+  L(C',P') + P(a) + P(b).
+
+QED
+
+Per tant: 
+
+Si N > 1 i l'algorisme és correcte per N-1 símbols i per tant L(C',P')
+és mínim entre tots els codis instantanis per P', llavors L(C,P) és
+mínim entre tots els codis per P que associen els símbols a i b de
+freqüències mes petites de P com germans. Pel lemma anterior, el
+conjunt d'aquests codis conté un codi òptim per P, i ja hem acabat.
+
+QED 
+
+
+7. Implementació
+----------------
+
+Anàlisi: Amb heaps, cost O(N.log(N)) [sense heaps, cost O(N^2)].
+
+#include <iostream>
+#include <vector>
+#include <queue>
+
+using namespace std;
+
+int N;           // el nombre de simbols
+vector<int> F;   // les frequencies inicials dels simbols
+vector<int> T;   // l'arbre que representa el codi resultat
+vector<int> FF;  // l'extensio de F als nodes interns de l'arbre
+
+// T representa un arbre binari amb N fulles i N-1 nodes interns.
+// Les N fulles son 0,1,2,...,N-1.
+// Els N-1 nodes interns son N,N+1,...,2N-2.
+// L'arrel es 2N-2.
+// Per x = 0,1,...,2N-2, abs(T[x]) es l'index del pare de x.
+// En negatiu si x és el fill esquerre del seu pare.
+// En positiu si x és el fill dret del seu pare.
+
+class Compara {
+public:
+  bool operator()(int a, int b) {
+    return FF[a] > FF[b];
+  }
+};
+
+void Huffman_code() {
+  priority_queue<int, vector<int>, Compara> Q;
+  for (int i = 0; i < N; ++i) Q.push(i);
+  for (int i = N; i < 2*N-1; ++i) {
+    int a = Q.top(); Q.pop();
+    int b = Q.top(); Q.pop();
+    T[a] = -i; 
+    T[b] = i;
+    FF.push_back(FF[a] + FF[b]);
+    Q.push(i);
+  }
+}
+
+string build(int i) {
+  if (i == 2*N-2) return "";
+  else {
+    int p = T[i];
+    return build((p<0)?-p:p) + ((p<0)?"0":"1");
+  }
+} 
+
+int main() {
+  cin >> N;
+  F = vector<int>(N);
+  for (int i = 0; i < N; ++i) cin >> F[i];
+  FF = F;
+  T = vector<int>(2*N-1, -1);
+  Huffman_code();
+  for (int i = 0; i < N; ++i) {
+    string s = build(i);
+    cout << i << ": " << s << endl;
+  }
+}
+
+-------------------------------
+

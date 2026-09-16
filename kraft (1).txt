@@ -1,0 +1,182 @@
+Codis de Huffman i Entropia
+---------------------------
+
+1. Codis i codis instantanis
+2. Desigualtat de Kraft
+3. Longitud mitjana i codi òptim
+4. Entropia i Primer Teorema de Shannon
+5. No optimalitat del codi de Shannon
+6. Codis de Huffman i optimalitat
+7. Implementació
+
+---------------------------------
+
+
+
+1. Codis i codis instantanis
+----------------------------
+
+Sigui
+
+  A = { a_1 , ... , a_N } 
+
+un conjunt finit de símbols: un alfabet.  
+
+Un codi binari per A és una funció 
+
+  C : A -> {0,1}^*,
+
+on {0,1}^* és el conjunt dels mots de l'alfabet {0,1}. Els C(a) són
+els mots de codi ("codewords", en anglès).
+
+Ex: codi ASCII. En aquest cas la longitud dels mots de codi és fixa:
+la mateixa per a tots els símbols.
+
+Si la funció no és injectiva, llavors no serveix. De fet, injectivitat
+no és suficient per poder descodificar de manera eficient per culpa
+dels possibles prefixes. Volem codis "instantanis": que ens permetin
+descodificar llegint d'esquerra a dreta una sola vegada sense "tirar
+enrera". Els definim així:
+
+Un codi binari instantani, o codi prefix, és una funció
+
+  C : A -> {0,1}^*
+
+tal que el conjunt { C(a) : a \in A } de mots de codi és lliure de
+prefixos:
+
+  per a tot a,b de A, 
+  si a \not= b, 
+  llavors C(a) no és un prefix (propi o no) de C(b).
+
+Els mots de {0,1}^* es poden veure com nodes en un arbre binari:
+
+  0 = branca esquerra
+  1 = branca dreta,
+
+des de l'arrel. Per tant, un codi instantani és un arbre binari on
+cada símbol està associat a una fulla, i cada fulla té associat un
+símbol. L'arbre que representa un codi instantani C ens permet
+descodificar fent una sola passada sobre el text codificat: llegint
+0's i 1's, comencem a l'arrel i anem baixant, quan arribem a una fulla
+escrivim el símbol associat a la fulla, i tornem a l'arrel.
+
+
+2. Desigualtat de Kraft
+-----------------------
+
+Sigui C : A -> {0,1}^* un codi instantani. La longitud de C(a) es
+denota L(a). Recordeu que un codi instantani es pot identificar amb un
+arbre binari amb els símbols de l'alfabet en correspondència bijectiva
+amb les fulles. Noteu que la profunditat de la fulla associada al
+símbol a és precisament L(a).
+
+Lema de la Desigualtat de Kraft: Si t_1,...,t_N són les longitud dels
+mots d'un codi instantani, llavors
+
+  \sum_{i=1}^N 2^{-t_i} \leq 1. 
+
+A mes, si t_1,...,t_N són nombres naturals que satisfan aquesta
+desigualtat, llavors existeix un codi instantani amb aquestes
+longituds.
+
+Demostració: Sigui
+
+  t_max = max{ t_1,...,t_N }. 
+
+Muntem l'arbre binari de profunditat t_max que te exactament 2^{t_max}
+fulles. Interpretem cada mot del codi com un camí dins l'arbre fins a
+un node n_i de l'arbre: 0 = esquerra i 1 = dreta. El node n_i té
+2^{t_max - t_i} fulles per sota seu dins l'arbre. El nombre de fulles
+total és 2^{t_max}. Per tant
+
+  \sum_{i=1}^N 2^{t_max - t_i} \leq 2^{t_max}.
+
+Dividint per 2^{t_max}, queda
+
+  \sum_{i=1}^N 2^{-t_i} \leq 1,
+
+tal com volíem.
+
+Per demostrar la segona part suposem, sense pèrdua de generalitat, que
+els t_i estan ordenats:
+
+  t_1 \leq t_2 \leq ... \leq t_N.
+
+Construïm un codi instantani construïnt un suarbre de l'arbre binari
+complet de profunditat t_max. Comencem associant el primer símbol de
+l'alfabet amb el primer node de l'arbre a profunditat t_1 en ordre
+lexicògrafic i esborrem el subarbre per sota. Tornem a començar amb el
+segon símbol: associem el primer node en ordre lexicogràfic a
+profunditat t_2 de l'arbre restant i esborrem el subarbre per
+sota. Per veure que sempre queda com a mínim un node a profunditat t_i
+comptem quants n'hem eliminat just abans de tractar el símbol
+i-èssim. Concretemant, just abans de tractar el símbol i-èssim hem
+eliminat exactament
+
+  \sum_{j=1}^{i-1} 2^{t_i - t_j}
+
+nodes de profunditat t_i. Per tant, ens en queden
+
+  2^{t_i} - \sum_{j=1}^{i-1} 2^{t_i - t_j}
+
+  = [factoritzant]
+
+  2^{t_i}.(1 - \sum_{i=1}^{i-1} 2^{-t_j})
+
+  > [perquè i-1 < N i 2^{-t_i} > 0]
+
+  2^{t_i}.(1 - \sum_{i=1}^N 2^{-t_i})
+
+  \geq [per hipòtesi]
+
+  0.
+
+Com que la desigualtat amb 0 és estricta, queda com a mínim un node a
+profunditat t_i i per tant podem continuar.
+
+QED.
+
+
+3. Longitud mitjana i codi òptim
+--------------------------------
+
+Sigui
+
+  P : A -> [0,1]
+
+una distribució de freqüències/probabilitat sobre els símbols de A;
+i.e.,
+
+  1) P(a) \geq 0 per a tot a \in A,
+  2) \sum_{a \in A} P(a) = 1.
+
+La probabilitat P(a) típicament representa la
+
+  "freqüència amb què el símbol a apareix a les dades." 
+
+És a dir, 
+
+  P(a) = F(a)/T, 
+
+on F(a) és la freqüència i T és la constant de normalització.
+
+La longitud mitjana del codi C respecte de P es defineix així:
+
+  L(C,P) := \sum_{a \in A} P(a).L(a).
+
+Problema:
+
+  Donada la distribució P : A -> [0,1], volem trobar un codi binari
+  instantani C^* : A -> {0,1}^* que sigui òptim per P, i.e., que
+  tingui longitud mitjana òptima: per a qualsevol altre codi binari
+  instantani C per A volem que L(C,P) \geq L(C^*,P). D'un tal codi en
+  direm òptim per P.
+
+Intuïtivament, els símbols mes freqüents haurien de tenir codis més
+curts. Ex: codi Morse. E = "." i Q = "--.-".
+
+---------------
+To Be Continued
+---------------
+

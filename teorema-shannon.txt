@@ -1,0 +1,136 @@
+4. Primer Teorema de Shannon
+----------------------------
+
+Teorema [Shannon]: Per a qualsevol distribució de probabilitat P,
+qualsevol codi instantani C^* que sigui òptim per P satisfà que
+
+  H(P) \leq L(C^*,P) \leq H(P) + 1, 
+
+on 
+
+  H(P) := - \sum_a P(a).\log_2(P(a)) 
+
+és l'entropia de Shannon.
+
+Demostració:
+
+Sigui
+
+  Q(a) := 2^{-L(a)}/T 
+
+on 
+
+  T := \sum_a 2^{-L(a)}. 
+
+Llavors
+
+  L(C^*,P) - H(P) 
+
+  = [desplegant definicions]
+
+  \sum_a P(a).(L(a) + \log_2(P(a))
+
+  = [el·lecció de Q(a) i T]
+
+  \sum_a P(a).(\log_2(1/(T.Q(a))) + \log_2(P(a))) 
+
+  = [logaritmes]
+
+  - \sum_a P(a).\log_2(Q(a)/P(a)) - \sum_a P(a).\log_2(T) 
+
+  = [suma dels P(a) es 1]
+
+  - \sum_a P(a).\log_2(Q(a)/P(a)) - \log_2(T)
+
+  \geq [donat que T \leq 1 per Kraft]
+
+  - \sum_a P(a).\log_2(Q(a)/P(a))
+
+  \geq [concavitat del logaritme i P és combinació convexa]
+
+  - \log_2(\sum_a P(a).Q(a)/P(a))
+
+  = [obvi]
+
+  - \log_2(\sum_a Q(a))
+
+  = [perque els Q(a) sumen 1]
+
+  0.
+
+Això demostra la primera desigualtat. Demostrem la segona.
+
+Sigui 
+
+  t_a = \lceil{\log_2(1/P(a))\rceil. 
+
+Verificarem que els t_a satisfan la desigualtat de Kraft. Si ho
+aconseguim, llavors per la segona part de la desigualtat de Kraft
+existirà un codi instantani C amb longituds (t_a : a in A) que
+satisfarà
+
+  L(C^*,P)
+
+  \leq [per optimalitat de C^*]
+
+  L(C,P)
+
+  = [desplegant definicions]
+
+  \sum_a P(a).t_a
+
+  \leq [eleccio de t_a; noteu el "+ 1"]
+
+  \sum_a P(a).(\log_2(1/P(a)) + 1)
+
+  = [distribuïnt]
+
+  \sum_a P(a).\log_2(1/P(a)) + \sum_a P(a)
+
+  = [definicio de H i suma dels P(a) es 1]
+
+  H(P) + 1.
+
+Queda verificar que els t_a satisfan la desigualtat de Kraft:
+
+  \sum_a 2^{-t_a} 
+
+  = [eleccio de t_a]
+
+  \sum_a 2^{-\lceil{\log_2(1/P(a))}\rceil} 
+
+  \leq [estem sumant números més grans]
+
+  \sum_a 2^{-\log_2(1/P(a))} 
+
+  = [logaritmes]
+
+  \sum_a P(a)
+
+  = [els P(a) sumen 1]
+
+  1. 
+
+QED
+
+5. No optimalitat del codi de Shannon
+-------------------------------------
+
+Del codi amb longituds
+
+  \lceil{\log_2(1/P(a))}\rceil 
+
+se'n diu codi de Shannon. 
+
+El codi de Shannon no és òptim. Considerem
+
+  P = (P(1)=0.0001, P(2)=0.9999). 
+
+Shannon dóna un codi amb longituds (14,1), i longitud mitjana 1.0013.
+
+El codi òptim te longituds (1,1), i longitud mitjana 1.
+
+---------------
+To Be Continued
+---------------
+
