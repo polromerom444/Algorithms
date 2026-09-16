@@ -1,0 +1,185 @@
+ep1.cc                                                                                               0000644 7504356 0000144 00000001174 14712641257 012623  0                                                                                                    ustar   salvador.roura                  users                                                                                                                                                                                                                  // Floyd-Warshall
+
+
+#include <iostream>
+#include <vector>
+using namespace std;
+
+
+const int INF = 1e8;
+
+
+using VI = vector<int>;
+using VVI = vector<VI>;
+
+
+int main() {
+  int n, m;
+  cin >> n >> m;
+  VVI M(n, VI(n, INF));
+  while (m--) {
+    int x, y, c;
+    cin >> x >> y >> c;
+    M[x][y] = c;
+  }
+
+  for (int x = 0; x < n; ++x) M[x][x] = 0;
+
+  for (int k = 0; k < n; ++k)
+    for (int i = 0; i < n; ++i)
+      for (int j = 0; j < n; ++j) M[i][j] = min(M[i][j], M[i][k] + M[k][j]);
+
+  for (int i = 0; i < n; ++i) {
+    for (int j = 0; j < n; ++j)
+      cout << (j ? " " : "") << (M[i][j] == INF ? -1 : M[i][j]);
+    cout << endl;
+  }
+}
+                                                                                                                                                                                                                                                                                                                                                                                                    p2.cc                                                                                               0000644 7504356 0000144 00000001432 14712641424 012615  0                                                                                                    ustar   salvador.roura                  users                                                                                                                                                                                                                  // Compta els components connexos d'un graf no dirigit,
+// i escriu per separat els vertexs de cada component.
+
+
+#include <iostream>
+#include <vector>
+using namespace std;
+
+
+using VI = vector<int>;
+using VVI = vector<VI>;
+using VB = vector<bool>;
+
+
+VVI G;
+VB vist;
+
+
+void dfs(int x) {
+  if (vist[x]) return;
+  vist[x] = true;
+  cout << x << endl;
+  for (int y : G[x]) dfs(y);
+}
+
+
+int main() {
+  int n, m;
+  while (cin >> n >> m) {
+    G = VVI(n);
+    while (m--) {
+      int x, y;
+      cin >> x >> y;
+      G[x].push_back(y);
+      G[y].push_back(x);
+    }
+
+    vist = VB(n, false);
+    int res = 0;
+    for (int x = 0; x < n; ++x)
+      if (not vist[x]) {
+        ++res;
+        dfs(x);
+        cout << string(10, '-') << endl;
+      }
+    cout << "nombre components: " << res << endl;
+  }
+}
+                                                                                                                                                                                                                                      p3.cc                                                                                               0000644 7504356 0000144 00000001574 14712641571 012630  0                                                                                                    ustar   salvador.roura                  users                                                                                                                                                                                                                  // Diu si un graf no dirigit es un bosc (si no te cicles). Versio 1.
+
+
+#include <iostream>
+#include <vector>
+using namespace std;
+
+
+using VI = vector<int>;
+using VVI = vector<VI>;
+using VB = vector<bool>;
+
+
+int n;
+VVI G;
+VB vist;
+
+
+// retorna el nombre de vertexs i el (doble del) nombre d'arestes del component
+void dfs(int x, int& v, int& a) {
+  if (vist[x]) return;
+  vist[x] = true;
+  ++v;
+  a += G[x].size();
+  for (int y : G[x]) dfs(y, v, a);
+}
+
+
+bool es_bosc() {
+  vist = VB(n, false);
+  for (int x = 0; x < n; ++x)
+    if (not vist[x]) {
+      int v = 0;
+      int a = 0;
+      dfs(x, v, a);
+      if (a > 2*(v - 1)) return false;
+    }
+  return true;
+}
+
+
+int main() {
+  int m;
+  while (cin >> n >> m) {
+    G = VVI(n);
+    while (m--) {
+      int x, y;
+      cin >> x >> y;
+      G[x].push_back(y);
+      G[y].push_back(x);
+    }
+    cout << (es_bosc() ? "si" : "no") << endl;
+  }
+}
+                                                                                                                                    p4.cc                                                                                               0000644 7504356 0000144 00000001274 14712641656 012632  0                                                                                                    ustar   salvador.roura                  users                                                                                                                                                                                                                  // Diu si un graf no dirigit es un bosc (si no te cicles). Versio 2.
+
+
+#include <iostream>
+#include <vector>
+using namespace std;
+
+
+using VI = vector<int>;
+using VVI = vector<VI>;
+using VB = vector<bool>;
+
+
+VVI G;
+VB vist;
+
+
+void dfs(int x) {
+  if (vist[x]) return;
+  vist[x] = true;
+  for (int y : G[x]) dfs(y);
+}
+
+
+int main() {
+  int n, m;
+  while (cin >> n >> m) {
+    G = VVI(n);
+    for (int r = 0; r < m; ++r) {
+      int x, y;
+      cin >> x >> y;
+      G[x].push_back(y);
+      G[y].push_back(x);
+    }
+
+    vist = VB(n, false);
+    int q = 0;
+    for (int x = 0; x < n; ++x)
+      if (not vist[x]) {
+        ++q;
+        dfs(x);
+      }
+    cout << (q + m == n ? "si" : "no") << endl;
+  }
+}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    

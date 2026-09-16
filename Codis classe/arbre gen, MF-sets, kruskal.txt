@@ -1,0 +1,105 @@
+p1.cc                                                                                               0000644 7504356 0000144 00000001321 14716610036 012610  0                                                                                                    ustar   salvador.roura                  users                                                                                                                                                                                                                  // Arbre generador + MF-sets
+
+
+#include <iostream>
+#include <vector>
+using namespace std;
+
+
+using P = pair<int, int>;
+using VP = vector<P>;
+using VI = vector<int>;
+
+
+int n, m;
+VP V;
+VI pare;
+
+
+int repre(int x) {
+  if (pare[x] == -1) return x;
+  int r = repre(pare[x]);
+  pare[x] = r;
+  return r;
+}
+
+
+void arbre_generador() {
+  int q = n;
+  pare = VI(n, -1);
+  for (auto [x, y] : V) {
+    int rx = repre(x);
+    int ry = repre(y);
+    if (rx != ry) {
+      pare[ry] = rx;
+      cout << x << ' ' << y << endl;
+      if (--q == 1) return; // suposant n > 1
+    }
+  }
+}
+
+
+int main() {
+  cin >> n >> m;
+  V = VP(m);
+//  for (P& p : V) cin >> p.first >> p.second;
+  for (auto& [x, y] : V) cin >> x >> y;
+  arbre_generador();
+}
+                                                                                                                                                                                                                                                                                                               p2.cc                                                                                               0000644 7504356 0000144 00000001467 14716610205 012622  0                                                                                                    ustar   salvador.roura                  users                                                                                                                                                                                                                  // Kruskal
+
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+
+struct Aresta {
+  int x, y, c;
+};
+
+
+using VA = vector<Aresta>;
+using VI = vector<int>;
+
+
+int n, m;
+VA V;
+VI pare;
+
+
+int repre(int x) {
+  return (pare[x] == -1 ? x : pare[x] = repre(pare[x]));
+}
+
+
+bool abans(Aresta a, Aresta b) {
+  return a.c < b.c; // cal que retorni false en cas d'igualtat
+}
+
+
+void kruskal() {
+  sort(V.begin(), V.end(), abans);
+  int q = n;
+  pare = VI(n, -1);
+  for (auto [x, y, c] : V) {
+    int rx = repre(x);
+    int ry = repre(y);
+    if (rx != ry) {
+//      pare[y] = x; pifia tipica
+      pare[ry] = rx;
+      cout << x << ' ' << y << ' ' << c << endl;
+      if (--q == 1) return;
+    }
+  }
+}
+
+
+int main() {
+  cin >> n >> m;
+  V = VA(m);
+  for (auto& [x, y, c] : V) cin >> x >> y >> c;
+  kruskal();
+}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         

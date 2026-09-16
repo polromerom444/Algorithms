@@ -1,0 +1,176 @@
+p1.cc                                                                                               0000664 0001750 0001750 00000001074 14715221205 010752  0                                                                                                    ustar   roura                           roura                                                                                                                                                                                                                  // Ordenacio topologica d'un DAG G.
+
+
+#include <iostream>
+#include <vector>
+#include <stack>
+using namespace std;
+
+
+using VI = vector<int>;
+using VVI = vector<VI>;
+
+
+int main() {
+  int n, m;
+  cin >> n >> m;
+  VVI G(n);
+  VI grau(n, 0);
+  while (m--) {
+    int x, y;
+    cin >> x >> y;
+    G[x].push_back(y);
+    ++grau[y];
+  }
+
+  stack<int> pila;
+  for (int x = 0; x < n; ++x)
+    if (grau[x] == 0) pila.push(x);
+
+  while (not pila.empty()) {
+    int x = pila.top(); pila.pop();
+    cout << x << endl;
+    for (int y : G[x])
+      if (--grau[y] == 0) pila.push(y);
+  }
+}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                    p2.cc                                                                                               0000664 0001750 0001750 00000001204 14715221353 010752  0                                                                                                    ustar   roura                           roura                                                                                                                                                                                                                  // Diu si un graf dirigit te algun cicle.
+
+
+#include <iostream>
+#include <vector>
+#include <stack>
+using namespace std;
+
+
+using VI = vector<int>;
+using VVI = vector<VI>;
+
+
+int main() {
+  int n, m;
+  cin >> n >> m;
+  VVI G(n);
+  VI grau(n, 0);
+  while (m--) {
+    int x, y;
+    cin >> x >> y;
+    G[x].push_back(y);
+    ++grau[y];
+  }
+
+  stack<int> pila;
+  for (int x = 0; x < n; ++x)
+    if (grau[x] == 0) pila.push(x);
+
+  int q = 0;
+  while (not pila.empty()) {
+    ++q;
+    int x = pila.top(); pila.pop();
+    for (int y : G[x])
+      if (--grau[y] == 0) pila.push(y);
+  }
+
+  cout << (q < n ? "te algun cicle" : "no te cap cicle") << endl;
+}
+                                                                                                                                                                                                                                                                                                                                                                                            p3.cc                                                                                               0000664 0001750 0001750 00000000735 14715222152 010761  0                                                                                                    ustar   roura                           roura                                                                                                                                                                                                                  // Exemples senzills d'us de structs.
+
+
+#include <iostream>
+#include <vector>
+using namespace std;
+
+
+struct Persona {
+  int dni;
+  string nom, cognom1, cognom2;
+  int telefon;
+  double pes;
+};
+
+
+int main() {
+  vector<Persona> V(10);
+// aixo no compilaria, perque Persona no te definit un comparador:
+// sort(V.begin(), V.end());
+
+  V[0].dni = 12345678;
+  Persona p;
+  p.nom = "Josep";
+  p.pes = 100.5;
+  Persona p2 = { 987654321, "Joan", "Garcia", "Puig", 601123456, 80.5 };
+}
+                                   p4.cc                                                                                               0000664 0001750 0001750 00000001041 14715222551 010754  0                                                                                                    ustar   roura                           roura                                                                                                                                                                                                                  // Exemples senzills d'us de pairs.
+// Son structs predefinits amb dos camps (first i second).
+// Els pairs es poden comparar directament: primer per first i,
+// en cas d'empat, per second.
+
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+
+using P = pair<string, int>;
+
+
+int main() {
+  vector<P> V = { P("Maria", 5), P("Anna", 12), P("Ivet", 11), P("Maria", 40) };
+  sort(V.begin(), V.end());
+  for (P p : V) cout << p.first << ' ' << p.second << endl;
+// Escriu:
+// Anna 12
+// Ivet 11
+// Maria 5
+// Maria 40
+}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               p5.cc                                                                                               0000664 0001750 0001750 00000003037 14715224002 010755  0                                                                                                    ustar   roura                           roura                                                                                                                                                                                                                  #include <iostream>
+#include <map>
+using namespace std;
+
+
+int main() {
+// llegeix una sequencia de paraules i compta quantes vagades apareix cadascuna
+  map<string, int> M;
+  string s;
+  while (cin >> s) ++M[s];
+
+/*
+  for (map<string, int>::iterator it = M.begin(); it != M.end(); ++it)
+    cout << (*it).first << ' ' << (*it).second << endl;
+
+  for (auto it = M.begin(); it != M.end(); ++it)
+    cout << it->first << ' ' << it->second << endl;
+*/
+
+// Escriu un llistat ordenat per paraula amb quantes vegades ha aparescut cadascuna.
+// Els dos bucles anteriors (comentats) farien el mateix.
+
+  for (auto p : M) cout << p.first << ' ' << p.second << endl;
+
+// Diu que la paraula pastanaga ha aparescut 3 vegades.
+// Aixo serveix tant per inserir com per actualitzar.
+  M["pastanaga"] = 3;
+
+// Si la paraula pissarra no ha aparescut, escriu un missatge indicant-ho.
+  if (M.find("pissarra") == M.end()) cout << "pissarra no esta" << endl;
+
+// Diu quantes vegades ha aparescut la paraula pop.
+// Vigila de no inserir la paraula pop si no hi era.
+  auto it = M.find("pop");
+  cout << (it != M.end() ? it->second : 0) << endl;
+
+// Esborra la informacio relativa a la paraula pastanaga.
+  M.erase("pastanaga");
+
+// Sabent que la paraula hola esta, volem saber quantes vegades apareix
+// la paraula immediatament anterior a hola dintre del map.
+  it = M.find("hola");
+  if (it == M.begin()) cout << "hola es la primera paraula (no te anterior)" << endl;
+  else {
+    --it;
+    cout << "la paraula " << it->first << " apareix " << it->second << " vegada(es)" << endl;
+  }
+}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 

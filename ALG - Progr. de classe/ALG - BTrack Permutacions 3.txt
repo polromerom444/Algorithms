@@ -1,0 +1,183 @@
+p1.cc                                                                                               0000644 7504356 0000144 00000001021 14670530204 012602  0                                                                                                    ustar   salvador.roura                  users                                                                                                                                                                                                                  // P69348
+
+
+#include <iostream>
+#include <vector>
+using namespace std;
+
+
+using VI = vector<int>;
+using VB = vector<bool>;
+
+
+int n;
+VI perm;
+VB usat;
+
+
+void escriu() {
+  for (int i = 0; i < n; ++i) cout << (i ? ',' : '(') << perm[i] + 1;
+  cout << ')' << endl;
+}
+
+
+void f(int i) {
+  if (i == n) return escriu();
+
+  for (int x = 0; x < n; ++x)
+    if (not usat[x]) {
+      usat[x] = true;
+      perm[i] = x;
+      f(i + 1);
+      usat[x] = false;
+    }
+}
+
+
+int main() {
+  cin >> n;
+  perm = VI(n);
+  usat = VB(n, false);
+  f(0);
+}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               p2.cc                                                                                               0000644 7504356 0000144 00000001146 14670530241 012614  0                                                                                                    ustar   salvador.roura                  users                                                                                                                                                                                                                  // P24674
+
+
+#include <iostream>
+#include <vector>
+using namespace std;
+
+
+using VS = vector<string>;
+using VI = vector<int>;
+using VB = vector<bool>;
+
+
+int n;
+VS par;
+VI perm;
+VB usat;
+
+
+void escriu() {
+  for (int i = 0; i < n; ++i) cout << (i ? ',' : '(') << par[perm[i]];
+  cout << ')' << endl;
+}
+
+
+void f(int i) {
+  if (i == n) return escriu();
+
+  for (int x = 0; x < n; ++x)
+    if (not usat[x]) {
+      usat[x] = true;
+      perm[i] = x;
+      f(i + 1);
+      usat[x] = false;
+    }
+}
+
+
+int main() {
+  cin >> n;
+  par = VS(n);
+  for (string& s : par) cin >> s;
+  perm = VI(n);
+  usat = VB(n, false);
+  f(0);
+}
+                                                                                                                                                                                                                                                                                                                                                                                                                          p3.cc                                                                                               0000644 7504356 0000144 00000001203 14670530363 012614  0                                                                                                    ustar   salvador.roura                  users                                                                                                                                                                                                                  // Escriu totes les maneres de posar n torres sense amenaces en un tauler nxn.
+
+
+#include <iostream>
+#include <vector>
+using namespace std;
+
+
+using VI = vector<int>;
+using VB = vector<bool>;
+
+
+int n;
+VI perm;
+VB colu;
+
+
+void escriu() {
+  for (int i = 0; i < n; ++i) {
+    for (int j = 0; j < n; ++j) cout << (j == perm[i] ? 'T' : '.');
+    cout << endl;
+  }
+  cout << endl;
+}
+
+
+void f(int i) {
+  if (i == n) return escriu();
+
+  for (int j = 0; j < n; ++j)
+    if (not colu[j]) {
+      colu[j] = true;
+      perm[i] = j;
+      f(i + 1);
+      colu[j] = false;
+    }
+}
+
+
+int main() {
+  cin >> n;
+  perm = VI(n);
+  colu = VB(n, false);
+  f(0);
+}
+                                                                                                                                                                                                                                                                                                                                                                                             p4.cc                                                                                               0000644 7504356 0000144 00000001467 14670530472 012632  0                                                                                                    ustar   salvador.roura                  users                                                                                                                                                                                                                  // Escriu totes les maneres de posar n reines sense amenaces en un tauler nxn.
+
+
+#include <iostream>
+#include <vector>
+using namespace std;
+
+
+using VI = vector<int>;
+using VB = vector<bool>;
+
+
+int n;
+VI perm;
+VB colu, dia1, dia2;
+
+
+void escriu() {
+  for (int i = 0; i < n; ++i) {
+    for (int j = 0; j < n; ++j) cout << (j == perm[i] ? 'R' : '.');
+    cout << endl;
+  }
+  cout << endl;
+}
+
+
+void f(int i) {
+  if (i == n) return escriu();
+
+  for (int j = 0; j < n; ++j) {
+    int d1 = i + j;
+    int d2 = i - j + n - 1;
+    if (not colu[j] and not dia1[d1] and not dia2[d2]) {
+      colu[j] = dia1[d1] = dia2[d2] = true;
+      perm[i] = j;
+      f(i + 1);
+      colu[j] = dia1[d1] = dia2[d2] = false;
+    }
+  }
+}
+
+
+int main() {
+  cin >> n;
+  perm = VI(n);
+  colu = VB(n, false);
+  dia1 = dia2 = VB(2*n - 1, false);
+  f(0);
+}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         

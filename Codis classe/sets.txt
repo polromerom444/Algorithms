@@ -1,0 +1,181 @@
+﻿SET
+===
+
+Un objecte de la classe set<T> és
+un conjunt (sense repeticions) d'elements de tipus T.
+
+Exemples de T: int, double, string, pair<int,int>, vector<int>, etc.
+Només cal que els elements de T es puguin comparar amb <
+
+Els elements del conjunt es guarden ordenats de menor a major
+(internament estan implementats amb *arbres binaris de cerca balancejats*)
+
+................................................................
+
+Cal fer la següent inclusió:
+
+#include <set>
+
+Com amb els vectors, és convenient afegir també la següent directiva:
+
+using namespace std;
+
+Això ens estalvia haver d'escriure std::set<int>, per exemple.
+
+................................................................
+
+Per defecte, el constructor crea un objecte buit:
+
+set<int> s0;
+
+Alternativament, es pot inicialitzar el conjunt amb una seqüència d'elements delimitada entre { }.
+
+set<int>              s1 = {1, 5, 3, 1};
+set<double>           s2 = {0.0, 0.5, 1.0};
+set<string>           s3 = {"hola", "adeu"};
+set< pair<int,int> >  s4 = { {0, 1}, {1, 0} };
+set< vector<int> >    s5 = { {0, 1}, {0, 0, 1} };
+
+................................................................
+
+Els anomenats "range-based for loops" permeten iterar de forma senzila.
+
+Per exemple, podem escriure s1 així:
+
+  cout << "set:";	   
+  for(int x : s1) cout << ' ' << x;
+  cout << endl;
+
+................................................................
+
+Alguns mètodes de la classe set<T>:
+
+bool empty() const       : diu si el contenidor és buit    
+unsigned int size() const: retorna la mida del contenidor
+
+Cost en el cas pitjor: Theta(1)
+
+Per exemple:
+
+  cout << boolalpha << s0.empty() << endl;
+  cout << boolalpha << s1.empty() << endl;
+  cout << s0.size() << endl;
+  cout << s1.size() << endl;
+
+................................................................
+
+A continuació, quan escrivim  "iterator" de fet volem dir "set<T>::iterator"
+
+Un iterator it es mou cap endavant amb ++it i cap endarrera amb --it
+
+Per accedir a l'element apuntat per un iterator it: *it
+
+iterator begin(): retorna l'iterador a l'element més petit
+iterator end  (): retorna l'iterador al següent de l'element més gran
+
+Cost en el cas pitjor: Theta(1)
+
+Per exemple, podem escriure s1 així també:
+
+  cout << "set:";
+  for (set<int>::iterator i = s1.begin(); i != s1.end(); ++i) {
+    int x = *i;
+    cout << ' '<< x ;
+  }
+  cout << endl;
+
+Podem veure qui són el mínim i el màxim de s1 així:
+
+  auto i = s1.begin();
+  cout << "min: " << *i << endl;
+
+  auto j = s1.end();
+  --j;
+  cout << "max: " << *j << endl;
+
+................................................................
+
+pair<iterator, bool>  insert ( const T& x );
+
+Afegeix x al conjunt.
+
+Si no hi era, retorna un iterador que apunta on s'ha ficat x, i true.
+
+Sinó retorna un iterador que apunta on ja hi havia x, i false.
+
+Cost en el cas pitjor: Theta(log n)
+
+Per exemple:
+
+  pair<set<int>::iterator, bool> res = s1.insert(8);
+  cout << "element: " << *(res.first) << endl;
+  cout << boolalpha << "afegit? " << res.second << endl;
+  
+  auto [it, afegit] = s1.insert(3);
+  cout << "element: " << *it << endl;
+  cout << boolalpha << "afegit? " << afegit << endl;
+  
+  s1.insert(6);
+
+................................................................
+
+iterator find ( const T& x ) const
+
+Busca l'element x al conjunt.
+Si el troba, retorna un iterador que hi apunta.
+Sinó retorna end().
+
+Cost Theta(log n)
+
+Per exemple:
+
+set<int>::iterator k;
+k = s1.find(7);
+if (k == s1.end()) cout << "No hi és" << endl;
+else               cout << "He trobat " << *k << endl;
+
+k = s1.find(8);
+if (k == s1.end()) cout << "No hi és" << endl;
+else               cout << "He trobat " << *k << endl;
+
+................................................................
+
+void erase ( iterator it )
+
+Elimina l'element apuntat per it.
+
+Cost en el cas pitjor: Theta(1) amortit
+
+Per exemple:
+
+s1.erase(k);
+
+................................................................
+
+int erase ( const T& x ):
+
+Si x pertany al conjunt, l'elimina i retorna 1.
+Sinó retorna 0.
+
+Cost en el cas pitjor: Theta(log n)
+
+Per exemple:
+
+Per exemple:
+
+cout << boolalpha << "Esborrat? " << s1.erase(5) << endl;
+cout << boolalpha << "Esborrat? " << s1.erase(7) << endl;
+
+................................................................
+
+Exemple:
+llegeix dues seqüències d'enters acabades en zero i escriu seva intersecció
+
+  set<int> s, t;
+  int x;
+  while (cin >> x and x != 0) s.insert(x);
+  while (cin >> x and x != 0) t.insert(x);
+
+  for (int y : s)
+    if (t.find(y) != t.end())
+      cout << y << endl;

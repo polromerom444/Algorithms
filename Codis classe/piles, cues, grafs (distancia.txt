@@ -1,0 +1,235 @@
+p1.cc                                                                                               0000644 7504356 0000144 00000000441 14714352703 012614  0                                                                                                    ustar   salvador.roura                  users                                                                                                                                                                                                                  // Exemple d'us de piles.
+
+
+#include <iostream>
+#include <stack>
+using namespace std;
+
+
+int main() {
+  stack<int> pila;
+  int x;
+  while (cin >> x) pila.push(x);
+
+  cout << "mida:" << pila.size() << endl;
+
+  while (not pila.empty()) {
+    cout << pila.top() << endl;
+    pila.pop();
+  }
+}
+                                                                                                                                                                                                                               p2.cc                                                                                               0000644 7504356 0000144 00000000434 14714352740 012620  0                                                                                                    ustar   salvador.roura                  users                                                                                                                                                                                                                  // Exemple d'us de cues.
+
+
+#include <iostream>
+#include <queue>
+using namespace std;
+
+
+int main() {
+  queue<int> cua;
+  int x;
+  while (cin >> x) cua.push(x);
+
+  cout << "mida:" << cua.size() << endl;
+
+  while (not cua.empty()) {
+    cout << cua.front() << endl;
+    cua.pop();
+  }
+}
+                                                                                                                                                                                                                                    p3.cc                                                                                               0000644 7504356 0000144 00000000461 14714352766 012631  0                                                                                                    ustar   salvador.roura                  users                                                                                                                                                                                                                  // Exemple d'us de cues de prioritats.
+
+
+#include <iostream>
+#include <queue>
+using namespace std;
+
+
+int main() {
+  priority_queue<int> cua;
+  int x;
+  while (cin >> x) cua.push(x);
+
+  cout << "mida:" << cua.size() << endl;
+
+  while (not cua.empty()) {
+    cout << cua.top() << endl;
+    cua.pop();
+  }
+}
+                                                                                                                                                                                                               p4.cc                                                                                               0000644 7504356 0000144 00000001437 14714353120 012617  0                                                                                                    ustar   salvador.roura                  users                                                                                                                                                                                                                  // Escriu els vertexs d'un graf en ordre de distancia a un vertex inicial.
+// No escriu els vertexs als quals no es pot arribar.
+
+
+#include <iostream>
+#include <vector>
+#include <queue>
+using namespace std;
+
+
+using VI = vector<int>;
+using VVI = vector<VI>;
+using VB = vector<bool>;
+
+
+int n;
+VVI G;
+
+
+void BFS(int ini) {
+  VB vist(n, false);
+  queue<int> Q;
+  vist[ini] = true;
+  Q.push(ini);
+  cout << ini << endl;
+  while (not Q.empty()) {
+    int x = Q.front(); Q.pop();
+    for (int y : G[x])
+      if (not vist[y]) {
+        vist[y] = true;
+        Q.push(y);
+        cout << y << endl;
+      }
+  }
+}
+
+
+int main() {
+  int m;
+  cin >> n >> m;
+  G = VVI(n);
+  while (m--) {
+    int x, y;
+    cin >> x >> y;
+    G[x].push_back(y);
+    G[y].push_back(x);
+  }
+
+  int ini;
+  cin >> ini;
+  BFS(ini);
+}
+                                                                                                                                                                                                                                 p5.cc                                                                                               0000644 7504356 0000144 00000001451 14714353251 012621  0                                                                                                    ustar   salvador.roura                  users                                                                                                                                                                                                                  // Escriu la distancia minima per arribar a cada vertex des d'un vertex inicial.
+// Escriu -1 per als vertexs als quals no es pot arribar.
+
+
+#include <iostream>
+#include <vector>
+#include <queue>
+using namespace std;
+
+
+using VI = vector<int>;
+using VVI = vector<VI>;
+
+
+int n;
+VVI G;
+
+
+void BFS(int ini) {
+  VI dist(n, -1);
+  queue<int> Q;
+  dist[ini] = 0;
+  Q.push(ini);
+  while (not Q.empty()) {
+    int x = Q.front(); Q.pop();
+    for (int y : G[x])
+      if (dist[y] == -1) {
+        dist[y] = dist[x] + 1;
+        Q.push(y);
+      }
+  }
+
+  for (int x = 0; x < n; ++x)
+    cout << x << ' ' << dist[x] << endl;
+}
+
+
+int main() {
+  int m;
+  cin >> n >> m;
+  G = VVI(n);
+  while (m--) {
+    int x, y;
+    cin >> x >> y;
+    G[x].push_back(y);
+    G[y].push_back(x);
+  }
+
+  int ini;
+  cin >> ini;
+  BFS(ini);
+}
+                                                                                                                                                                                                                       p6.cc                                                                                               0000644 7504356 0000144 00000002240 14714353541 012621  0                                                                                                    ustar   salvador.roura                  users                                                                                                                                                                                                                  // Escriu el cami minim des d'un vertex inicial fins a un vertex final,
+// o un missatge si no hi ha cami.
+
+
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <stack>
+using namespace std;
+
+
+using VI = vector<int>;
+using VVI = vector<VI>;
+
+
+int n;
+VVI G;
+
+
+void BFS(int ini, int fi) {
+  if (ini == fi) {
+    cout << ini << endl;
+    return;
+  }
+
+  VI pare(n, -1);
+  queue<int> Q;
+  pare[ini] = -2;
+  Q.push(ini);
+  while (not Q.empty()) {
+    int x = Q.front(); Q.pop();
+    for (int y : G[x])
+      if (pare[y] == -1) {
+        pare[y] = x;
+        Q.push(y);
+        if (y == fi) {
+          stack<int> pila;
+          while (y != ini) {
+            pila.push(y);
+            y = pare[y];
+          }
+
+          cout << ini;
+          while (not pila.empty()) {
+            cout << ' ' << pila.top(); pila.pop();
+          }
+          cout << endl;
+          return;
+        }
+      }
+  }
+  cout << "no hi ha cami des de " << ini << " fins a " << fi << endl;
+}
+
+
+int main() {
+  int m;
+  cin >> n >> m;
+  G = VVI(n);
+  while (m--) {
+    int x, y;
+    cin >> x >> y;
+    G[x].push_back(y);
+    G[y].push_back(x);
+  }
+
+  int ini, fi;
+  cin >> ini >> fi;
+  BFS(ini, fi);
+}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                

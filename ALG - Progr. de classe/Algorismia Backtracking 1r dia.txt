@@ -1,0 +1,227 @@
+p1.cc                                                                                               0000644 0001750 0001750 00000001032 14667524435 010763  0                                                                                                    ustar   roura                           roura                                                                                                                                                                                                                  // Escriu en ordre lexicografic totes les combinacions de 0s i 1s de mida n.
+// Versio senzilla.
+
+
+#include <iostream>
+#include <vector>
+using namespace std;
+
+
+using VI = vector<int>;
+
+
+// escriu en ordre lexicografic totes les combinacions de 0s i 1s de mida n que comencen amb V[0..i-1]
+void f(int i, VI& V) {
+  int n = V.size();
+  if (i == n) {
+    for (int x : V) cout << x;
+    cout << endl;
+  }
+  else {
+    V[i] = 0;
+    f(i + 1, V);
+    V[i] = 1;
+    f(i + 1, V);
+  }
+}
+
+
+int main() {
+  int n;
+  cin >> n;
+  VI V(n);
+  f(0, V);
+}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      p2.cc                                                                                               0000644 0001750 0001750 00000000651 14667524450 010767  0                                                                                                    ustar   roura                           roura                                                                                                                                                                                                                  // Escriu en ordre lexicografic totes les combinacions de 0s i 1s de mida n.
+// Versio millor a Algorismia.
+
+
+#include <iostream>
+#include <vector>
+using namespace std;
+
+
+using VI = vector<int>;
+
+
+int n;
+VI V;
+
+
+void escriu() {
+  for (int x : V) cout << x;
+  cout << endl;
+}
+
+
+void f(int i) {
+  if (i == n) return escriu();
+
+  V[i] = 0;
+  f(i + 1);
+  V[i] = 1;
+  f(i + 1);
+}
+
+
+int main() {
+  cin >> n;
+  V = VI(n);
+  f(0);
+}
+                                                                                       p3.cc                                                                                               0000644 0001750 0001750 00000001020 14667524503 010756  0                                                                                                    ustar   roura                           roura                                                                                                                                                                                                                  // Escriu en ordre lexicografic totes les combinacions de 0s i 1s de mida n
+// que no tenen dos o mes 0s seguits.
+// Versio lenta.
+
+
+#include <iostream>
+#include <vector>
+using namespace std;
+
+
+using VI = vector<int>;
+
+
+int n;
+VI V;
+
+
+void escriu() {
+  for (int x : V) cout << x;
+  cout << endl;
+}
+
+
+void f(int i) {
+  if (i == n) {
+    for (int j = 1; j < n; ++j)
+      if (V[j-1] + V[j] == 0) return;
+    return escriu();
+  }
+
+  V[i] = 0;
+  f(i + 1);
+  V[i] = 1;
+  f(i + 1);
+}
+
+
+int main() {
+  cin >> n;
+  V = VI(n);
+  f(0);
+}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                p4.cc                                                                                               0000644 0001750 0001750 00000000732 14667524521 010770  0                                                                                                    ustar   roura                           roura                                                                                                                                                                                                                  // Compta totes les combinacions de 0s i 1s de mida n
+// que no tenen dos o mes 0s seguits.
+// Versio lenta.
+
+
+#include <iostream>
+#include <vector>
+using namespace std;
+
+
+using VI = vector<int>;
+
+
+int n;
+VI V;
+
+
+int f(int i) {
+  if (i == n) {
+    for (int j = 1; j < n; ++j)
+      if (V[j-1] + V[j] == 0) return 0;
+    return 1;
+  }
+
+  V[i] = 0;
+  int res = f(i + 1);
+  V[i] = 1;
+  return res + f(i + 1);
+}
+
+
+int main() {
+  cin >> n;
+  V = VI(n);
+  cout << f(0) << endl;
+}
+                                      p5.cc                                                                                               0000644 0001750 0001750 00000000740 14667621553 010773  0                                                                                                    ustar   roura                           roura                                                                                                                                                                                                                  // Compta totes les combinacions de 0s i 1s de mida n
+// que no tenen dos o mes 0s seguits.
+// Versio "rapida" (surten els nombres de Fibonacci).
+
+
+#include <iostream>
+#include <vector>
+using namespace std;
+
+
+using VI = vector<int>;
+
+
+int n;
+VI V;
+
+
+int f(int i) {
+  if (i == n) return 1;
+
+  int res = 0;
+  if (i == 0 or V[i-1] != 0) {
+    V[i] = 0;
+    res += f(i + 1);
+  }
+  V[i] = 1;
+  return res + f(i + 1);
+}
+
+
+int main() {
+  cin >> n;
+  V = VI(n);
+  cout << f(0) << endl;
+}
+                                p6.cc                                                                                               0000644 0001750 0001750 00000001101 14667524621 010762  0                                                                                                    ustar   roura                           roura                                                                                                                                                                                                                  // Troba la primera (lexicograficament) combinacio de 0s i 1s de mida n
+// que no tingui dos o mes 0s seguits.
+
+
+#include <iostream>
+#include <vector>
+using namespace std;
+
+
+using VI = vector<int>;
+
+
+int n;
+VI V;
+
+
+void escriu() {
+  for (int x : V) cout << x;
+  cout << endl;
+}
+
+
+bool f(int i) {
+  if (i == n) {
+    escriu();
+    return true;
+  }
+
+  if (i == 0 or V[i-1] != 0) {
+    V[i] = 0;  
+    if (f(i + 1)) return true;
+  }
+  V[i] = 1;
+  return f(i + 1);
+}
+
+
+int main() {
+  cin >> n;
+  V = VI(n);
+  if (not f(0)) cout << "sense solucio" << endl; // aqui no passara mai
+}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
